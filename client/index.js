@@ -6,11 +6,9 @@ import {Router} from 'react-router-dom'
 // import store from './store'
 import App from './App'
 
+
+
 ReactDOM.render(
-  <Provider >
-    <Router >
-      <App />
-    </Router>
-  </Provider>,
+      <App />,
   document.getElementById('app')
 )
