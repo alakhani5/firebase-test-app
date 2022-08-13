@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { addDoc } from "firebase/firestore";
+import { addDoc, serverTimestamp } from "firebase/firestore";
 import { breadRef } from "../../src";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 
 const AddBread = (props) => {
   const [type, setType] = useState("");
@@ -13,6 +15,7 @@ const AddBread = (props) => {
     addDoc(breadRef, {
       type: type,
       difficulty: difficulty,
+      createdAt: serverTimestamp()
     }).then(() => {
       document.querySelector('.add').reset()
       setType("");
@@ -23,7 +26,7 @@ const AddBread = (props) => {
   return (
     <div>
       <h2>Add that Bread</h2>
-      <form className="add" onSubmit={handleAdd}>
+      <Form className="add" onSubmit={handleAdd}>
         <label for="type">Type: </label>
         <input type="text" name="type" onChange={(evt) => setType(evt.target.value)} placeholder='Ciabatta' required></input>
         <br />
@@ -41,8 +44,8 @@ const AddBread = (props) => {
           </select>
         </label>{" "}
         <br /><br/>
-        <button type="submit">Get that bread</button>
-      </form>
+        <Button variant="primary" type="submit">Get that bread</Button>
+      </Form>
     </div>
   );
 };

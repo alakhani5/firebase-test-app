@@ -1,4 +1,4 @@
-import { query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { query, where, onSnapshot, getDocs, orderBy } from "firebase/firestore";
 import React from "react";
 import { useState } from "react";
 import { breadRef } from "../../src";
@@ -7,27 +7,28 @@ const SearchBreads = (props) => {
   const [searchVal, setSearchVal] = useState("");
   const [result, setResult] = useState("");
   const [searchType, setSearchType] = useState("type");
-  const [searched, setSearched] = useState(false);
+  const [searched, setSearched] = useState(0);
 
-  const q = query(
-    breadRef,
-    where(searchType, "==", searchVal),
-    orderBy("desc")
-  );
-  console.log(q)
-
-  onSnapshot(q, (snapshot) => {
-    let breads = [];
-    snapshot.docs.forEach((doc) => {
-      breads.push({ ...doc.data(), id: doc.id }); // pulling the data and the id for each value
-    });
-    console.log("search breads", breads);
-  });
+  // console.log('searched breads',searchedBreads)
 
   const handleSearch = (evt) => {
     evt.preventDefault();
-    setResult(breadSearch);
-    setSearched(true);
+    const q = query(
+      breadRef,
+      where(searchType, "==", searchVal),
+      orderBy("createdAt", "asc")
+    );
+    getDocs(q)
+      .then((snapshot) => {
+        let breads = [];
+        snapshot.docs.forEach((doc) => {
+          breads.push({ ...doc.data(), id: doc.id }); // pulling the data and the id for each value
+        });
+        setResult(breads);
+      })
+      .catch((err) => console.log("error fetching bread", err));
+
+    setSearched(1);
 
     // document.querySelector(".search").reset();
   };
@@ -39,7 +40,7 @@ const SearchBreads = (props) => {
         <label for="type">Search for a type of bread: </label>
         <br />
         <label for="selector">
-          Search By:
+          {/* Search By: */}
           <select
             name="selector"
             value={searchType}
@@ -61,11 +62,20 @@ const SearchBreads = (props) => {
         <button type="submit">Find that bread</button>
       </form>
       <br />
-      <br />
-      {result && searched ? (
-        <div>we found the bread: {result}</div>
+      {searched === 0 ? (
+        <div></div>
+      ) : result.length ? (
+        <div>
+          <h2>Results:</h2>
+          {result.map((bread) => (
+            <div id={bread.id}>
+              <h3>Type: {bread.type}</h3>
+              <body>Difficulty: {bread.difficulty}</body>
+            </div>
+          ))}
+        </div>
       ) : (
-        <div>Nothing yet!</div>
+        <div>You've hit a bread end</div>
       )}
     </div>
   );

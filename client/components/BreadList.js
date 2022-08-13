@@ -1,29 +1,36 @@
-import React, { useState } from "react";
-import { onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { onSnapshot, query, where, orderBy } from "firebase/firestore";
 import { breadRef } from "../../src";
 
 const BreadList = (props) => {
+  const [allBreads, setAllBreads] = useState([]);
 
-  onSnapshot(breadRef, (snapshot) => {
-    let breads = [];
-    snapshot.docs.forEach((doc) => {
-      breads.push({ ...doc.data(), id: doc.id }); // pulling the data and the id for each value
-    })
-    console.log('breads from list',breads)
-  });
-
-  const [breads, setBreads] = useState([]);
-  // console.log('all breads',allBreads);
+  useEffect(() => {
+    const q = query(breadRef, orderBy('createdAt', "asc"))
+    onSnapshot(q, (snapshot) => {
+      let breads = [];
+      snapshot.docs.forEach((doc) => {
+        breads.push({ ...doc.data(), id: doc.id }); // pulling the data and the id for each value
+      });
+      setAllBreads(breads);
+    });
+  }, []);
 
   return (
     <div>
-      <h1>Bread List</h1>
-      {breads.map((bread) => {
-        <div id={bread.id}>
-          <title>Type: {bread.type}</title>
-          <desc>Difficulty: {bread.difficulty}</desc>
-        </div>;
-      })}
+      {allBreads.length ? (
+        <div>
+          <h1>Bread List</h1>
+          {allBreads.map((bread) => (
+            <div id={bread.id}>
+              <h3>Type: {bread.type}</h3>
+              <body>Difficulty: {bread.difficulty}</body>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <h3>no bread for you!</h3>
+      )}
     </div>
   );
 };
