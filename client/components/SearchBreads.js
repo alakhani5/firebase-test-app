@@ -1,7 +1,11 @@
 import { query, where, onSnapshot, getDocs, orderBy } from "firebase/firestore";
 import React from "react";
 import { useState } from "react";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
 import { breadRef } from "../../src";
+import BreadCard from "./BreadCard";
 
 const SearchBreads = (props) => {
   const [searchVal, setSearchVal] = useState("");
@@ -35,13 +39,15 @@ const SearchBreads = (props) => {
 
   return (
     <div>
+<Col sm>
+      <Form className="search" onSubmit={handleSearch}>
+
       <h2>Find Bread</h2>
-      <form className="search" onSubmit={handleSearch}>
-        <label for="type">Search for a type of bread: </label>
+        <Form.Label for="type">Search for a type of bread: </Form.Label>
         <br />
-        <label for="selector">
+        <Form.Label for="selector">
           {/* Search By: */}
-          <select
+          <Form.Select
             name="selector"
             value={searchType}
             onChange={(evt) => setSearchType(evt.target.value)}
@@ -49,34 +55,33 @@ const SearchBreads = (props) => {
           >
             <option value="type">Type</option>
             <option value="difficulty">Difficulty</option>
-          </select>
-        </label>
-        <input
+          </Form.Select>
+        </Form.Label>
+        <Form.Control
           type="text"
           name="type"
           placeholder={searchType === "type" ? "Focaccia" : "Easy"}
           onChange={(evt) => setSearchVal(evt.target.value)}
-        ></input>
+        ></Form.Control>
         <br />
         <br />
-        <button type="submit">Find that bread</button>
-      </form>
+        <Button type="submit">Find that bread</Button>
+      </Form>
+      </Col>
       <br />
       {searched === 0 ? (
         <div></div>
       ) : result.length ? (
         <div>
           <h2>Results:</h2>
-          {result.map((bread) => (
-            <div id={bread.id}>
-              <h3>Type: {bread.type}</h3>
-              <body>Difficulty: {bread.difficulty}</body>
-            </div>
-          ))}
+          <BreadCard allBreads={result}/>
         </div>
       ) : (
         <div>You've hit a bread end</div>
       )}
+      <br/>
+      <br/>
+      <br/>
     </div>
   );
 };

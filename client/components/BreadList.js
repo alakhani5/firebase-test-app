@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot, query, where, orderBy } from "firebase/firestore";
 import { breadRef } from "../../src";
+import BreadCard from "./BreadCard";
+import Col from "react-bootstrap/Col";
 
 const BreadList = (props) => {
   const [allBreads, setAllBreads] = useState([]);
@@ -17,21 +19,16 @@ const BreadList = (props) => {
   }, []);
 
   return (
-    <div>
+    <Col xl>
       {allBreads.length ? (
         <div>
           <h1>Bread List</h1>
-          {allBreads.map((bread) => (
-            <div id={bread.id}>
-              <h3>Type: {bread.type}</h3>
-              <body>Difficulty: {bread.difficulty}</body>
-            </div>
-          ))}
+          <BreadCard allBreads={allBreads}/>
         </div>
       ) : (
-        <h3>no bread for you!</h3>
+        <h3>No bread for you!</h3>
       )}
-    </div>
+    </Col>
   );
 };
 

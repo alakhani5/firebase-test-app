@@ -4,6 +4,9 @@ import { addDoc, serverTimestamp } from "firebase/firestore";
 import { breadRef } from "../../src";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 const AddBread = (props) => {
   const [type, setType] = useState("");
@@ -15,38 +18,54 @@ const AddBread = (props) => {
     addDoc(breadRef, {
       type: type,
       difficulty: difficulty,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     }).then(() => {
-      document.querySelector('.add').reset()
+      document.querySelector(".add").reset();
       setType("");
       setDifficulty("easy");
     });
   };
 
   return (
-    <div>
-      <h2>Add that Bread</h2>
-      <Form className="add" onSubmit={handleAdd}>
-        <label for="type">Type: </label>
-        <input type="text" name="type" onChange={(evt) => setType(evt.target.value)} placeholder='Ciabatta' required></input>
-        <br />
-        <label for="difficulty">
-          Difficulty:
-          <select
-            name="difficulty"
-            value={difficulty}
-            onChange={(evt) => setDifficulty(evt.target.value)}
-            required
-          >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </label>{" "}
-        <br /><br/>
-        <Button variant="primary" type="submit">Get that bread</Button>
-      </Form>
-    </div>
+    <Form className="add" onSubmit={handleAdd}>
+      <Col md>
+        <h2>Add that Bread</h2>
+        <Row>
+          <Col xs>
+            <Form.Label htmlFor="breadType" label="Bread Type" className="mb-3">
+              Bread Type:
+              <Form.Control
+                type="text"
+                id="breadType"
+                aria-describedby="input bread type"
+                onChange={(evt) => setType(evt.target.value)}
+                placeholder="Ciabatta"
+                required
+              />
+            </Form.Label>
+          </Col>
+          <Col xs>
+            <Form.Label htmlFor="difficulty" className="mb-3">
+              Difficulty: <br />
+              <Form.Select
+                id="difficulty"
+                aria-label="Default select example"
+                value={difficulty}
+                onChange={(evt) => setDifficulty(evt.target.value)}
+                required
+              >
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </Form.Select>
+            </Form.Label>
+          </Col>
+        </Row>
+        <Button variant="primary" type="submit">
+          Get that bread
+        </Button>
+      </Col>
+    </Form>
   );
 };
 
